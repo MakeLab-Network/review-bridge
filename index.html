@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>דרגו את מייקלאב בגוגל</title>
+<!-- review-bridge v0.1 · 26/11/2026 · asks row 382 (report #417) · TEST — not linked from any template yet -->
+<style>
+  :root { --bg:#f6f8f7; --ink:#16211f; --muted:#5d6b68; --accent:#0b6f6a; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#121817; --ink:#e6eceb; --muted:#9aa8a5; --accent:#4fc4bc; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.5 -apple-system,"Segoe UI",Arial,sans-serif; }
+  main { max-width:460px; margin:0 auto; padding:28px 16px 40px; display:flex; flex-direction:column; gap:14px; }
+  h1 { font-size:1.4rem; margin:0; }
+  p { margin:0; }
+  .btn { display:block; text-align:center; text-decoration:none; padding:16px; border-radius:12px;
+         background:var(--accent); color:#fff; font-weight:700; font-size:1.1rem; }
+  .btn.alt { background:transparent; color:var(--accent); border:2px solid var(--accent); }
+  .hint { color:var(--muted); font-size:.92rem; }
+  .ver { color:var(--muted); font-size:.75rem; direction:ltr; text-align:left; overflow-wrap:anywhere; margin-top:18px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>תודה שאתם מדרגים את MakeLab ⭐</h1>
+  <p>כדי שגוגל לא יבקש מכם להתחבר מחדש, פתחו את הדירוג בדפדפן הרגיל של הטלפון:</p>
+
+  <a id="a-chrome" class="btn" hidden>פתחו בכרום ⭐</a>
+  <a id="a-maps" class="btn alt" hidden>או: פתחו באפליקציית גוגל מפות</a>
+  <a id="i-safari" class="btn" hidden>פתחו בספארי ⭐</a>
+  <a id="plain" class="btn alt">להמשיך כאן בכל זאת</a>
+
+  <p class="hint">אם בכל זאת מבקשים להתחבר: לחצו על שלוש הנקודות (⋮) או על סמל השיתוף למעלה ובחרו «פתח בדפדפן».</p>
+  <p class="ver" id="ver"></p>
+</main>
+<script>
+(function () {
+  var VERSION = 'review-bridge v0.1 26/11/2026';
+  var REVIEW = 'https://g.page/r/CZIK1BqM7VnCEAI/review';
+  var HOSTPATH = 'g.page/r/CZIK1BqM7VnCEAI/review';
+  var ua = navigator.userAgent || '';
+  var qs = new URLSearchParams(location.search);
+  var android = /Android/i.test(ua);
+  var ios = /iPhone|iPad|iPod/i.test(ua);
+  // In-app browsers: WhatsApp / Facebook / Instagram name themselves; Android WebViews carry "; wv)".
+  var inApp = /WhatsApp|FBAN|FBAV|FB_IAB|Instagram|; wv\)/i.test(ua);
+
+  function intentFor(pkg) {
+    return 'intent://' + HOSTPATH + '#Intent;scheme=https;package=' + pkg +
+           ';S.browser_fallback_url=' + encodeURIComponent(REVIEW) + ';end';
+  }
+  function show(id, href) { var a = document.getElementById(id); a.href = href; a.hidden = false; }
+
+  document.getElementById('plain').href = REVIEW;
+  document.getElementById('ver').textContent = VERSION + ' · ' + (android ? 'android' : ios ? 'ios' : 'other') +
+    (inApp ? ' · in-app' : ' · browser') + ' · ' + ua;
+
+  // Already in a real browser: no reason to stop here (?stay=1 keeps the page for testing).
+  if (!inApp && !qs.has('stay')) { location.replace(REVIEW); return; }
+
+  if (android) {
+    show('a-chrome', intentFor('com.android.chrome'));
+    show('a-maps', intentFor('com.google.android.apps.maps'));
+  } else if (ios) {
+    show('i-safari', 'x-safari-' + REVIEW);   // iOS 17+ opens Safari; untested from WhatsApp
+  }
+})();
+</script>
+</body>
+</html>
