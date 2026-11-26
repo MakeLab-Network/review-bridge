@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>דרגו את מייקלאב בגוגל</title>
-<!-- review-bridge v0.1 · 26/11/2026 · asks row 382 (report #417) · TEST — not linked from any template yet -->
+<!-- review-bridge v0.2 · 26/11/2026 · asks row 382 · phones ALWAYS get the escape buttons (WhatsApp's browser is not detectable by UA) -->
 <style>
   :root { --bg:#f6f8f7; --ink:#16211f; --muted:#5d6b68; --accent:#0b6f6a; }
   @media (prefers-color-scheme: dark) { :root { --bg:#121817; --ink:#e6eceb; --muted:#9aa8a5; --accent:#4fc4bc; } }
@@ -36,7 +36,7 @@
 </main>
 <script>
 (function () {
-  var VERSION = 'review-bridge v0.1 26/11/2026';
+  var VERSION = 'review-bridge v0.2 26/11/2026';
   var REVIEW = 'https://g.page/r/CZIK1BqM7VnCEAI/review';
   var HOSTPATH = 'g.page/r/CZIK1BqM7VnCEAI/review';
   var ua = navigator.userAgent || '';
@@ -56,8 +56,10 @@
   document.getElementById('ver').textContent = VERSION + ' · ' + (android ? 'android' : ios ? 'ios' : 'other') +
     (inApp ? ' · in-app' : ' · browser') + ' · ' + ua;
 
-  // Already in a real browser: no reason to stop here (?stay=1 keeps the page for testing).
-  if (!inApp && !qs.has('stay')) { location.replace(REVIEW); return; }
+  // v0.2: measured 26/11 — inside WhatsApp's built-in browser (template links) this page
+  // auto-redirected, i.e. the UA did NOT look in-app. So a PHONE always stops here and offers
+  // the escape; only a desktop goes straight to Google (?go=1 forces the redirect for testing).
+  if ((!android && !ios && !inApp) || qs.has('go')) { location.replace(REVIEW); return; }
 
   if (android) {
     show('a-chrome', intentFor('com.android.chrome'));
