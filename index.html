@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>דרגו את מייקלאב בגוגל</title>
-<!-- review-bridge v0.3 · 26/11/2026 · asks row 382 · Android tries the Chrome escape AUTOMATICALLY once; buttons stay as the fallback -->
+<!-- review-bridge v0.4 · 26/11/2026 · asks row 382 · ONE Chrome button (Maps also asked for a login, Avi 23:4x); v0.3's timed auto-escape was blocked, v0.4 tries a meta-refresh instead -->
 <style>
   :root { --bg:#f6f8f7; --ink:#16211f; --muted:#5d6b68; --accent:#0b6f6a; }
   @media (prefers-color-scheme: dark) { :root { --bg:#121817; --ink:#e6eceb; --muted:#9aa8a5; --accent:#4fc4bc; } }
@@ -29,14 +29,13 @@
   <a id="a-chrome" class="btn" hidden>פתחו בכרום ⭐</a>
   <a id="a-maps" class="btn alt" hidden>או: פתחו באפליקציית גוגל מפות</a>
   <a id="i-safari" class="btn" hidden>פתחו בספארי ⭐</a>
-  <a id="plain" class="btn alt">להמשיך כאן בכל זאת</a>
 
   <p class="hint">אם בכל זאת מבקשים להתחבר: לחצו על שלוש הנקודות (⋮) או על סמל השיתוף למעלה ובחרו «פתח בדפדפן».</p>
   <p class="ver" id="ver"></p>
 </main>
 <script>
 (function () {
-  var VERSION = 'review-bridge v0.3 26/11/2026';
+  var VERSION = 'review-bridge v0.4 26/11/2026';
   var REVIEW = 'https://g.page/r/CZIK1BqM7VnCEAI/review';
   var HOSTPATH = 'g.page/r/CZIK1BqM7VnCEAI/review';
   var ua = navigator.userAgent || '';
@@ -52,7 +51,6 @@
   }
   function show(id, href) { var a = document.getElementById(id); a.href = href; a.hidden = false; }
 
-  document.getElementById('plain').href = REVIEW;
   document.getElementById('ver').textContent = VERSION + ' · ' + (android ? 'android' : ios ? 'ios' : 'other') +
     (inApp ? ' · in-app' : ' · browser') + ' · ' + ua;
 
@@ -63,10 +61,13 @@
 
   if (android) {
     show('a-chrome', intentFor('com.android.chrome'));
-    show('a-maps', intentFor('com.google.android.apps.maps'));
-    // v0.3: try the escape without a tap. A browser may refuse a navigation with no user
-    // gesture — then nothing happens and the buttons above are still there. ?noauto=1 = off.
-    if (!qs.has('noauto')) setTimeout(function () { location.href = intentFor('com.android.chrome'); }, 300);
+    // v0.4: the Maps option also asked for a login (Avi 26/11 23:4x) — removed, one button only.
+    // v0.3's timed location.href was blocked (no user gesture). Try a meta refresh, a different
+    // navigation path some WebViews let through. Blocked = nothing happens, the button stays.
+    if (!qs.has('noauto')) {
+      var m = document.createElement('meta'); m.httpEquiv = 'refresh';
+      m.content = '0;url=' + intentFor('com.android.chrome'); document.head.appendChild(m);
+    }
   } else if (ios) {
     show('i-safari', 'x-safari-' + REVIEW);   // iOS 17+ opens Safari; untested from WhatsApp
   }
