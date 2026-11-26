@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>דרגו את מייקלאב בגוגל</title>
-<!-- review-bridge v0.2 · 26/11/2026 · asks row 382 · phones ALWAYS get the escape buttons (WhatsApp's browser is not detectable by UA) -->
+<!-- review-bridge v0.3 · 26/11/2026 · asks row 382 · Android tries the Chrome escape AUTOMATICALLY once; buttons stay as the fallback -->
 <style>
   :root { --bg:#f6f8f7; --ink:#16211f; --muted:#5d6b68; --accent:#0b6f6a; }
   @media (prefers-color-scheme: dark) { :root { --bg:#121817; --ink:#e6eceb; --muted:#9aa8a5; --accent:#4fc4bc; } }
@@ -36,7 +36,7 @@
 </main>
 <script>
 (function () {
-  var VERSION = 'review-bridge v0.2 26/11/2026';
+  var VERSION = 'review-bridge v0.3 26/11/2026';
   var REVIEW = 'https://g.page/r/CZIK1BqM7VnCEAI/review';
   var HOSTPATH = 'g.page/r/CZIK1BqM7VnCEAI/review';
   var ua = navigator.userAgent || '';
@@ -64,6 +64,9 @@
   if (android) {
     show('a-chrome', intentFor('com.android.chrome'));
     show('a-maps', intentFor('com.google.android.apps.maps'));
+    // v0.3: try the escape without a tap. A browser may refuse a navigation with no user
+    // gesture — then nothing happens and the buttons above are still there. ?noauto=1 = off.
+    if (!qs.has('noauto')) setTimeout(function () { location.href = intentFor('com.android.chrome'); }, 300);
   } else if (ios) {
     show('i-safari', 'x-safari-' + REVIEW);   // iOS 17+ opens Safari; untested from WhatsApp
   }
